@@ -65,7 +65,7 @@ pub type AdvzGPU<'srs, E, H> = AdvzInternal<
     E,
     H,
     (
-        HostOrDeviceSlice<'srs, IcicleAffine<<UnivariateKzgPCS<E> as GPUCommittable<E>>::IC>>,
+        DeviceVec<IcicleAffine<<UnivariateKzgPCS<E> as GPUCommittable<E>>::IC>>,
         CudaStream,
     ),
 >;

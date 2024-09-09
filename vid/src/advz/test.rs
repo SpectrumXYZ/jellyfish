@@ -51,6 +51,28 @@ fn commit_only_timer() {
     let _ = advz.commit_only(payload_random);
 }
 
+#[ignore]
+#[test]
+#[cfg(feature = "gpu-vid")]
+/// Stress test with varied payload sizes for GPU memory
+/// leakage/fragmentation.
+fn stress_test_gpu_disperse() {
+    let (recovery_threshold, num_storage_nodes) = (256, 512);
+    let mut rng = jf_utils::test_rng();
+    let srs = init_srs(recovery_threshold as usize, &mut rng);
+    let mut advz_gpu =
+        AdvzGPU::<'_, Bn254, Sha256>::new(num_storage_nodes, recovery_threshold, &srs).unwrap();
+
+    for i in 0..100 {
+        let payload_size = rng.next_u32() % (1 << 25);
+        let payload_random = init_random_payload(payload_size as usize, &mut rng);
+
+        let _ = advz_gpu.disperse(payload_random.clone());
+
+        ark_std::println!("{}", i);
+    }
+}
+
 #[test]
 fn sad_path_verify_share_corrupt_share() {
     let (mut advz, bytes_random) = advz_init();
